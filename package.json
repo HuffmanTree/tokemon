@@ -1,0 +1,19 @@
+{
+  "name": "tokemon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "truffle:develop": "npx --yes truffle develop",
+    "truffle:test": "npx --yes truffle test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
