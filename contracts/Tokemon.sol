@@ -24,9 +24,7 @@ contract Tokemon is ERC165, ERC721 {
     }
 
     function balanceOf(address owner) external view returns (uint256) {
-        if (owner == address(0)) {
-            revert("Must not be called with the zero address");
-        }
+        require(owner != address(0), "Must not be called with the zero address");
         return _balances[owner];
     }
 
