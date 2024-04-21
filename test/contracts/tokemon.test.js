@@ -111,6 +111,51 @@ contract("Tokemon", (accounts) => {
         expect(await instance.getBalance(accounts[1])).to.deep.equal(web3.utils.toBN(1))
       }));
   });
+
+  describe("approve", () => {
+    beforeEach(async () => {
+      await instance.setOwner(5, accounts[0]);
+      await instance.setBalance(accounts[0], 1);
+    });
+
+    it("forbids the approval when sender is not the owner, and no delegation", async () => {
+      await expectRevert(
+        instance.approve(accounts[1], 5, { from: accounts[1] }),
+        "Approval forbidden",
+      );
+    });
+
+    [
+      ["the sender is the owner", () => {}, accounts[0]],
+      ["the sender is a delegator of the owner", async () => {
+        await instance.addOperatorApproval(accounts[0], accounts[2]);
+      }, accounts[2]],
+    ].forEach(([s, setup, sender]) =>
+      it(`sets the approved address for a token when ${s}`, async () => {
+        await setup();
+
+        await instance.approve(accounts[1], 5, { from: sender })
+
+        expect(await instance.getTokenApproval(5)).to.equal(accounts[1]);
+      }));
+  });
+
+  describe("setApprovalForAll", async () => {
+    [
+      ["approves", () => {}, true],
+      ["revokes", async () => {
+        await instance.addOperatorApproval(accounts[0], accounts[1]);
+      }, false],
+    ].forEach(([s, setup, approved]) =>
+      it(`${s} an operator`, async () => {
+        await setup();
+        expect(await instance.getOperatorApproval(accounts[0], accounts[1])).to.be[!approved];
+
+        await instance.setApprovalForAll(accounts[1], approved, { from: accounts[0] });
+
+        expect(await instance.getOperatorApproval(accounts[0], accounts[1])).to.be[approved];
+      }));
+  });
 });
 
 async function expectRevert(call, reason) {

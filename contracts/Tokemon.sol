@@ -52,9 +52,16 @@ contract Tokemon is ERC165, ERC721 {
         _owners[tokenId] = to;
     }
 
-    function approve(address _approved, uint256 _tokenId) external payable {}
+    function approve(address approved, uint256 tokenId) external payable {
+        require(msg.sender == _owners[tokenId] ||
+                _operatorApprovals[_owners[tokenId]][msg.sender],
+                "Approval forbidden");
+        _tokenApprovals[tokenId] = approved;
+    }
 
-    function setApprovalForAll(address _operator, bool _approved) external {}
+    function setApprovalForAll(address operator, bool approved) external {
+        _operatorApprovals[msg.sender][operator] = approved;
+    }
 
     function getApproved(uint256 _tokenId) external view returns (address) {}
 

@@ -26,7 +26,15 @@ contract TestTokemon is Tokemon {
         _tokenApprovals[tokenId] = approval;
     }
 
+    function getTokenApproval(uint256 tokenId) public view returns (address) {
+        return _tokenApprovals[tokenId];
+    }
+
     function addOperatorApproval(address owner, address approval) public {
         _operatorApprovals[owner][approval] = true;
+    }
+
+    function getOperatorApproval(address owner, address approval) public view returns (bool) {
+        return _operatorApprovals[owner][approval];
     }
 }
