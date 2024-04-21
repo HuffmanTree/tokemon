@@ -1,4 +1,4 @@
-const Tokemon = artifacts.require("Tokemon");
+const Tokemon = artifacts.require("TestTokemon");
 
 module.exports = function (deployer) {
    deployer.deploy(Tokemon);

@@ -6,6 +6,9 @@ import "./interfaces/ERC165.sol";
 import "./interfaces/ERC721.sol";
 
 contract Tokemon is ERC165, ERC721 {
+    mapping(address owner => uint256) internal _balances;
+    mapping(uint256 tokenId => address) internal _owners;
+
     function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
         return
             interfaceID == this.supportsInterface.selector ||
@@ -20,9 +23,17 @@ contract Tokemon is ERC165, ERC721 {
                 this.isApprovedForAll.selector;
     }
 
-    function balanceOf(address _owner) external view returns (uint256) {}
+    function balanceOf(address owner) external view returns (uint256) {
+        if (owner == address(0)) {
+            revert("Must not be called with the zero address");
+        }
+        return _balances[owner];
+    }
 
-    function ownerOf(uint256 _tokenId) external view returns (address) {}
+    function ownerOf(uint256 tokenId) external view returns (address) {
+        require(_owners[tokenId] != address(0), "Owner must not be the zero address");
+        return _owners[tokenId];
+    }
 
     function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes memory data) external payable {}
 
