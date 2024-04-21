@@ -64,4 +64,5 @@ async function expectRevert(call, reason) {
 
     throw new Error(`Expected to throw with '${reason}' but got '${err.message}'`);
   }
+  throw new Error("Expected to throw");
 }
