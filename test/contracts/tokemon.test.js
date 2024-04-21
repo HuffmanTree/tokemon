@@ -54,6 +54,63 @@ contract("Tokemon", (accounts) => {
       expect(await instance.ownerOf.call(5)).to.equal(accounts[0]);
     });
   });
+
+  describe("transferFrom", async () => {
+    beforeEach(async () => {
+      await instance.setOwner(5, accounts[0]);
+      await instance.setBalance(accounts[0], 1);
+    });
+
+    it("throws with an invalid token owner", async () => {
+      await expectRevert(
+        instance.transferFrom(accounts[2], accounts[1], 5, { from: accounts[0] }),
+        "Invalid token owner",
+      );
+    });
+
+    it("throws when the receiver is the zero address", async () => {
+      await expectRevert(
+        instance.transferFrom(accounts[0], "0x0000000000000000000000000000000000000000", 5, { from: accounts[0] }),
+        "Receiver must not be the zero address",
+      );
+    });
+
+    it("throws when the token is invalid", async () => {
+      // emulate an approval on a non-existing token
+      await instance.setTokenApproval(6, accounts[0]);
+
+      await expectRevert(
+        instance.transferFrom("0x0000000000000000000000000000000000000000", accounts[1], 6, { from: accounts[0] }),
+        "Token is invalid",
+      );
+    });
+
+    it("forbids the transfer when sender is not the owner, and no approval or delegation", async () => {
+      await expectRevert(
+        instance.transferFrom(accounts[0], accounts[1], 5, { from: accounts[1] }),
+        "Transfer forbidden",
+      );
+    });
+
+    [
+      ["the sender is the owner", () => {}, accounts[0]],
+      ["the sender is a delegator of the owner", async () => {
+        await instance.addOperatorApproval(accounts[0], accounts[2]);
+      }, accounts[2]],
+      ["the sender is the approved address for the token", async () => {
+        await instance.setTokenApproval(5, accounts[2])
+      }, accounts[2]],
+    ].forEach(([s, setup, sender]) =>
+      it(`transfers a token when ${s}`, async () => {
+        await setup();
+
+        await instance.transferFrom(accounts[0], accounts[1], 5, { from: sender })
+
+        expect(await instance.getOwner(5)).to.equal(accounts[1]);
+        expect(await instance.getBalance(accounts[0])).to.deep.equal(web3.utils.toBN(0))
+        expect(await instance.getBalance(accounts[1])).to.deep.equal(web3.utils.toBN(1))
+      }));
+  });
 });
 
 async function expectRevert(call, reason) {

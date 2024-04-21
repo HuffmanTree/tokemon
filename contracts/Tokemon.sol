@@ -8,6 +8,8 @@ import "./interfaces/ERC721.sol";
 contract Tokemon is ERC165, ERC721 {
     mapping(address owner => uint256) internal _balances;
     mapping(uint256 tokenId => address) internal _owners;
+    mapping(uint256 tokenId => address) internal _tokenApprovals;
+    mapping(address owner => mapping(address operator => bool)) internal _operatorApprovals;
 
     function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
         return
@@ -37,7 +39,18 @@ contract Tokemon is ERC165, ERC721 {
 
     function safeTransferFrom(address _from, address _to, uint256 _tokenId) external payable {}
 
-    function transferFrom(address _from, address _to, uint256 _tokenId) external payable {}
+    function transferFrom(address from, address to, uint256 tokenId) external payable {
+        require(msg.sender == _owners[tokenId] ||
+                _operatorApprovals[_owners[tokenId]][msg.sender] ||
+                msg.sender == _tokenApprovals[tokenId],
+                "Transfer forbidden");
+        require(from == _owners[tokenId], "Invalid token owner");
+        require(to != address(0), "Receiver must not be the zero address");
+        require(_owners[tokenId] != address(0), "Token is invalid");
+        _balances[from] -= 1;
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+    }
 
     function approve(address _approved, uint256 _tokenId) external payable {}
 
