@@ -4,7 +4,7 @@ contract("Tokemon", (accounts) => {
   let instance;
 
   beforeEach(async () => {
-    instance = await Tokemon.deployed();
+    instance = await Tokemon.new();
   });
 
   describe("supportsInterface", () => {
