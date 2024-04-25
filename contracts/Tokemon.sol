@@ -4,12 +4,22 @@ pragma solidity ^0.8.21;
 
 import "./interfaces/ERC165.sol";
 import "./interfaces/ERC721.sol";
+import "./interfaces/ERC721Metadata.sol";
 
-contract Tokemon is ERC165, ERC721 {
+contract Tokemon is ERC165, ERC721, ERC721Metadata {
     mapping(address owner => uint256) internal _balances;
     mapping(uint256 tokenId => address) internal _owners;
     mapping(uint256 tokenId => address) internal _tokenApprovals;
     mapping(address owner => mapping(address operator => bool)) internal _operatorApprovals;
+    mapping(uint256 tokenId => string) internal _tokenURIs;
+    string internal _name;
+    string internal _symbol;
+
+    function name() external view returns (string memory) {}
+
+    function symbol() external view returns (string memory) {}
+
+    function tokenURI(uint256 tokenId) external view returns (string memory) {}
 
     function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
         return
@@ -22,7 +32,10 @@ contract Tokemon is ERC165, ERC721 {
                 this.approve.selector ^
                 this.setApprovalForAll.selector ^
                 this.getApproved.selector ^
-                this.isApprovedForAll.selector;
+                this.isApprovedForAll.selector ||
+            interfaceID == this.name.selector ^
+                this.symbol.selector ^
+                this.tokenURI.selector;
     }
 
     function balanceOf(address owner) external view returns (uint256) {
