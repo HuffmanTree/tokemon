@@ -156,6 +156,46 @@ contract("Tokemon", (accounts) => {
         expect(await instance.getOperatorApproval(accounts[0], accounts[1])).to.be[approved];
       }));
   });
+
+  describe("getApproved", () => {
+    beforeEach(async () => {
+      await instance.setOwner(5, accounts[0]);
+      await instance.setBalance(accounts[0], 1);
+    });
+
+    it("throws when the token is invalid", async () => {
+      await expectRevert(
+        instance.getApproved(6),
+        "Token is invalid",
+      );
+    });
+
+    [
+      ["the zero address if no approved address", () => {}, "0x0000000000000000000000000000000000000000"],
+      ["the approved address", async () => {
+        await instance.setTokenApproval(5, accounts[1]);
+      }, accounts[1]],
+    ].forEach(([s, setup, approved]) =>
+      it(`gets ${s}`, async () => {
+        await setup();
+
+        expect(await instance.getApproved(5)).to.equal(approved);
+      }));
+  });
+
+  describe("isApprovedForAll", () => {
+    [
+      ["is", async () => {
+        await instance.addOperatorApproval(accounts[0], accounts[1]);
+      }, true],
+      ["is not", () => {}, false],
+    ].forEach(([s, setup, approved]) =>
+      it(`${s} a delegator of the specified account`, async () => {
+        await setup();
+
+        expect(await instance.isApprovedForAll(accounts[0], accounts[1])).to.be[approved];
+      }));
+  });
 });
 
 async function expectRevert(call, reason) {

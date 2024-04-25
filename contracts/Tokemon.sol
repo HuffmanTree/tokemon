@@ -63,7 +63,12 @@ contract Tokemon is ERC165, ERC721 {
         _operatorApprovals[msg.sender][operator] = approved;
     }
 
-    function getApproved(uint256 _tokenId) external view returns (address) {}
+    function getApproved(uint256 tokenId) external view returns (address) {
+        require(_owners[tokenId] != address(0), "Token is invalid");
+        return _tokenApprovals[tokenId];
+    }
 
-    function isApprovedForAll(address _owner, address _operator) external view returns (bool) {}
+    function isApprovedForAll(address owner, address operator) external view returns (bool) {
+        return _operatorApprovals[owner][operator];
+    }
 }
