@@ -36,6 +36,22 @@ contract("Tokemon", (accounts) => {
     });
   });
 
+  describe("tokenURI", () => {
+    it("throws an error when the owner is the zero address", async () => {
+      await expectRevert(
+        instance.tokenURI.call(5),
+        "Token is invalid",
+      );
+    });
+
+    it("gets the URI of a token", async () => {
+      await instance.setOwner(5, accounts[0]);
+      await instance.setTokenURI(5, "tokemon://five");
+
+      expect(await instance.tokenURI.call(5)).to.equal("tokemon://five");
+    });
+  });
+
   describe("balanceOf", () => {
     it("throws an error when called with the zero address", async () => {
       await expectRevert(

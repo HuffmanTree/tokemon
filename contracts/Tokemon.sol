@@ -23,7 +23,10 @@ contract Tokemon is ERC165, ERC721, ERC721Metadata {
         return _symbol;
     }
 
-    function tokenURI(uint256 tokenId) external view returns (string memory) {}
+    function tokenURI(uint256 tokenId) external view returns (string memory) {
+        require(_owners[tokenId] != address(0), "Token is invalid");
+        return _tokenURIs[tokenId];
+    }
 
     function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
         return

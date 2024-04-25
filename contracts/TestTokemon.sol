@@ -14,6 +14,10 @@ contract TestTokemon is Tokemon {
         _symbol = symbol;
     }
 
+    function setTokenURI(uint256 tokenId, string memory tokenURI) public {
+        _tokenURIs[tokenId] = tokenURI;
+    }
+
     function setBalance(address owner, uint256 amount) public {
         _balances[owner] = amount;
     }
