@@ -15,9 +15,13 @@ contract Tokemon is ERC165, ERC721, ERC721Metadata {
     string internal _name;
     string internal _symbol;
 
-    function name() external view returns (string memory) {}
+    function name() external view returns (string memory) {
+        return _name;
+    }
 
-    function symbol() external view returns (string memory) {}
+    function symbol() external view returns (string memory) {
+        return _symbol;
+    }
 
     function tokenURI(uint256 tokenId) external view returns (string memory) {}
 

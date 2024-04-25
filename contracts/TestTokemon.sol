@@ -6,6 +6,14 @@ import "./Tokemon.sol";
 
 // Only used in tests
 contract TestTokemon is Tokemon {
+    function setName(string memory name) public {
+        _name = name;
+    }
+
+    function setSymbol(string memory symbol) public {
+        _symbol = symbol;
+    }
+
     function setBalance(address owner, uint256 amount) public {
         _balances[owner] = amount;
     }

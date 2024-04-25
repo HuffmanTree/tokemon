@@ -22,6 +22,20 @@ contract("Tokemon", (accounts) => {
     });
   });
 
+  describe("name and symbol", () => {
+    it("gets the contract name", async () => {
+      await instance.setName("Tokemon");
+
+      expect(await instance.name.call()).to.equal("Tokemon");
+    });
+
+    it("gets the contract symbol", async () => {
+      await instance.setSymbol("TKM");
+
+      expect(await instance.symbol.call()).to.equal("TKM");
+    });
+  });
+
   describe("balanceOf", () => {
     it("throws an error when called with the zero address", async () => {
       await expectRevert(
