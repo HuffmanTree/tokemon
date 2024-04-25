@@ -8,17 +8,14 @@ contract("Tokemon", (accounts) => {
   });
 
   describe("supportsInterface", () => {
-    it("implements the ERC-165 interface", async () => {
-      expect(await instance.supportsInterface.call("0x01ffc9a7")).to.be.true;
-    });
-
-    it("implements the ERC-721 interface", async () => {
-      expect(await instance.supportsInterface.call("0x80ac58cd")).to.be.true;
-    })
-
-    it("implements the ERC-721 metadata interface", async () => {
-      expect(await instance.supportsInterface.call("0x5b5e139f")).to.be.true;
-    })
+    [
+      ["ERC-165",          "0x01ffc9a7"],
+      ["ERC-721",          "0x80ac58cd"],
+      ["ERC-721 metadata", "0x5b5e139f"],
+    ].forEach(([interface, interfaceID]) =>
+      it(`implements the ${interface} interface`, async () => {
+        expect(await instance.supportsInterface.call(interfaceID)).to.be.true;
+      }));
 
     it("returns false when the identifier is '0xffffffff'", async () => {
       expect(await instance.supportsInterface.call("0xffffffff")).to.be.false;
