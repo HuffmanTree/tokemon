@@ -44,7 +44,7 @@ contract("Tokemon", (accounts) => {
     it("throws an error when the owner is the zero address", async () => {
       await expectRevert(
         instance.ownerOf.call(5),
-        "Owner must not be the zero address",
+        "Token is invalid",
       );
     });
 

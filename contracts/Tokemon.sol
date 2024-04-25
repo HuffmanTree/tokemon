@@ -31,7 +31,7 @@ contract Tokemon is ERC165, ERC721 {
     }
 
     function ownerOf(uint256 tokenId) external view returns (address) {
-        require(_owners[tokenId] != address(0), "Owner must not be the zero address");
+        require(_owners[tokenId] != address(0), "Token is invalid");
         return _owners[tokenId];
     }
 
